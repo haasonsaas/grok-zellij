@@ -1,0 +1,10 @@
+---
+direction: Horizontal
+parts:
+  - direction: Vertical
+    split_size:
+      Percent: 70
+    run:
+      command: { cmd: bash }
+  - run:
+      command: { cmd: bash }
