@@ -1,0 +1,7 @@
+# ShellCheck configuration for zellij-setup.sh
+# Allow sourcing files
+source-path=SCRIPTDIR
+# Disable warnings for specific cases
+disable=SC1090,SC1091
+# Enable additional checks
+enable=all

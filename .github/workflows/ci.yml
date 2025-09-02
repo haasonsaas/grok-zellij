@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install ShellCheck
+      run: sudo apt-get update && sudo apt-get install -y shellcheck
+    - name: Run ShellCheck
+      run: shellcheck zellij-setup.sh
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Bats
+      run: sudo apt-get update && sudo apt-get install -y bats
+    - name: Install Zellij
+      run: |
+        wget -qO- https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz | tar xzf -
+        sudo mv zellij /usr/local/bin/
+    - name: Run tests
+      run: bats test/
+
+  format:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install shfmt
+      run: |
+        wget -qO- https://github.com/mvdan/sh/releases/download/v3.6.0/shfmt_v3.6.0_linux_amd64 | sudo tee /usr/local/bin/shfmt > /dev/null
+        sudo chmod +x /usr/local/bin/shfmt
+    - name: Check formatting
+      run: shfmt -d zellij-setup.sh

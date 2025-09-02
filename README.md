@@ -104,10 +104,34 @@ parts:
 - Zellij
 - GitHub CLI (for pushing updates)
 
+## Development
+
+### Testing
+Run the test suite:
+```bash
+bats test/
+```
+
+### Linting
+Check code quality:
+```bash
+shellcheck zellij-setup.sh
+```
+
+### Formatting
+Format the code:
+```bash
+shfmt -w zellij-setup.sh
+```
+
 ## Contributing
 
-Feel free to submit issues and pull requests.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a list of changes.
 
 ## License
 
-MIT License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
