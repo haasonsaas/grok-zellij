@@ -1,8 +1,22 @@
 #!/bin/bash
+#
+# Zellij Setup Script
+#
+# This script provides a comprehensive interface for managing Zellij terminal
+# multiplexer sessions with custom layouts and configurations.
+#
+# Features:
+# - Launch sessions with custom layouts
+# - Attach to existing sessions
+# - Kill sessions
+# - Dry-run mode for testing
+# - Extensive configuration options
+#
+# Author: OpenCode AI Assistant
+# License: MIT
+#
 
-# Zellij setup script for project development
-
-# Function to show usage
+# show_help: Display usage information and options
 show_help() {
     echo "Usage: $0 [SESSION_NAME] [--layout FILE] [--config FILE] [--theme THEME] [--max-panes NUM] [--new] [--attach SESSION] [--verbose] [--help] [--list] [--dry-run] [--version] [--kill SESSION] [--kill-all]"
     echo "Launch or manage Zellij sessions with project layout."
@@ -24,6 +38,7 @@ show_help() {
     echo "  --kill-all      Kill and delete all Zellij sessions"
 }
 
+# Validate prerequisites
 # Check if zellij is installed
 if [ "$VERBOSE" = 1 ]; then echo "Checking Zellij installation..."; fi
 if ! command -v zellij >/dev/null 2>&1; then
@@ -32,9 +47,10 @@ if ! command -v zellij >/dev/null 2>&1; then
 fi
 
 # Set default layout path
-LAYOUT_PATH="$(dirname "$0")/layout.yaml"
+LAYOUT_PATH="$(dirname "$0")/layouts/default.yaml"
 
-# Parse arguments
+# Parse command line arguments
+# Default session name
 SESSION_NAME="grok-project"
 DRY_RUN=0
 ATTACH_SESSION=""

@@ -83,8 +83,9 @@ List active sessions:
 
 ## Layout Configuration
 
-The `layout.yaml` file defines the pane structure. Edit it to customize your workspace:
+Layouts are stored in the `layouts/` directory. The default layout is `layouts/default.yaml`. You can specify custom layouts with `--layout`.
 
+### Default Layout
 ```yaml
 ---
 direction: Horizontal
@@ -96,6 +97,22 @@ parts:
       command: { cmd: bash }
   - run:
       command: { cmd: bash }
+```
+
+### Development Layout
+For more complex setups, use `layouts/dev.yaml`:
+```bash
+./zellij-setup.sh --layout layouts/dev.yaml
+```
+
+## Development
+
+Use the Makefile for common tasks:
+```bash
+make install    # Make script executable
+make test       # Run tests
+make lint       # Lint code
+make format     # Format code
 ```
 
 ## Requirements
