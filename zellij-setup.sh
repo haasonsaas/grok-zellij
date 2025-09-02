@@ -4,16 +4,18 @@
 
 # Function to show usage
 show_help() {
-    echo "Usage: $0 [SESSION_NAME] [--layout FILE] [--config FILE] [--max-panes NUM] [--new] [--attach SESSION] [--help] [--list] [--dry-run] [--version] [--kill SESSION] [--kill-all]"
+    echo "Usage: $0 [SESSION_NAME] [--layout FILE] [--config FILE] [--theme THEME] [--max-panes NUM] [--new] [--attach SESSION] [--verbose] [--help] [--list] [--dry-run] [--version] [--kill SESSION] [--kill-all]"
     echo "Launch or manage Zellij sessions with project layout."
     echo ""
     echo "Options:"
     echo "  SESSION_NAME    Name for the Zellij session (default: grok-project)"
     echo "  --layout FILE   Path to layout file (default: ./layout.yaml)"
     echo "  --config FILE   Path to config file"
+    echo "  --theme THEME   Theme to use"
     echo "  --max-panes NUM Maximum number of panes"
     echo "  --new           Force creation of new session"
     echo "  --attach SESSION Attach to existing session"
+    echo "  --verbose       Enable verbose output"
     echo "  --help          Show this help message"
     echo "  --list          List active Zellij sessions"
     echo "  --dry-run       Show the command that would be executed without running it"
@@ -23,6 +25,7 @@ show_help() {
 }
 
 # Check if zellij is installed
+if [ "$VERBOSE" = 1 ]; then echo "Checking Zellij installation..."; fi
 if ! command -v zellij >/dev/null 2>&1; then
     echo "Error: Zellij is not installed. Please install Zellij first."
     exit 1
@@ -38,6 +41,8 @@ ATTACH_SESSION=""
 CONFIG_FILE=""
 MAX_PANES=""
 NEW_SESSION=0
+THEME=""
+VERBOSE=0
 while [[ $# -gt 0 ]]; do
     case $1 in
         --help)
@@ -73,6 +78,15 @@ while [[ $# -gt 0 ]]; do
                 exit 1
             fi
             ;;
+        --theme)
+            if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
+                THEME="$2"
+                shift
+            else
+                echo "Error: --theme requires a theme name"
+                exit 1
+            fi
+            ;;
         --max-panes)
             if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
                 MAX_PANES="$2"
@@ -93,6 +107,9 @@ while [[ $# -gt 0 ]]; do
                 echo "Error: --attach requires a session name"
                 exit 1
             fi
+            ;;
+        --verbose)
+            VERBOSE=1
             ;;
         --kill)
             if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
@@ -121,6 +138,7 @@ if [ "$NEW_SESSION" = 1 ] && [ -n "$ATTACH_SESSION" ]; then
 fi
 
 # Check if layout file exists (only if not attaching)
+if [ "$VERBOSE" = 1 ] && [ -z "$ATTACH_SESSION" ]; then echo "Checking layout file..."; fi
 if [ -z "$ATTACH_SESSION" ] && [ ! -f "$LAYOUT_PATH" ]; then
     echo "Error: Layout file not found at $LAYOUT_PATH"
     exit 1
@@ -131,6 +149,9 @@ if [ "$DRY_RUN" = 1 ]; then
     CMD="zellij"
     if [ -n "$CONFIG_FILE" ]; then
         CMD="$CMD --config \"$CONFIG_FILE\""
+    fi
+    if [ -n "$THEME" ]; then
+        CMD="$CMD --theme \"$THEME\""
     fi
     if [ -n "$MAX_PANES" ]; then
         CMD="$CMD --max-panes \"$MAX_PANES\""
@@ -147,16 +168,23 @@ if [ "$DRY_RUN" = 1 ]; then
 fi
 
 # Check if running in a TTY
+if [ "$VERBOSE" = 1 ]; then echo "Checking for TTY..."; fi
 if [ ! -t 0 ]; then
     echo "Error: Zellij requires a TTY to run. Please run this script in a terminal."
     exit 1
 fi
+
+# All checks passed
+if [ "$VERBOSE" = 1 ]; then echo "All checks passed. Proceeding..."; fi
 
 # Launch or attach to Zellij session
 if [ "$NEW_SESSION" = 1 ]; then
     CMD="zellij"
     if [ -n "$CONFIG_FILE" ]; then
         CMD="$CMD --config \"$CONFIG_FILE\""
+    fi
+    if [ -n "$THEME" ]; then
+        CMD="$CMD --theme \"$THEME\""
     fi
     if [ -n "$MAX_PANES" ]; then
         CMD="$CMD --max-panes \"$MAX_PANES\""
@@ -168,6 +196,9 @@ elif [ -n "$ATTACH_SESSION" ]; then
     if [ -n "$CONFIG_FILE" ]; then
         CMD="$CMD --config \"$CONFIG_FILE\""
     fi
+    if [ -n "$THEME" ]; then
+        CMD="$CMD --theme \"$THEME\""
+    fi
     if [ -n "$MAX_PANES" ]; then
         CMD="$CMD --max-panes \"$MAX_PANES\""
     fi
@@ -177,6 +208,9 @@ else
     CMD="zellij"
     if [ -n "$CONFIG_FILE" ]; then
         CMD="$CMD --config \"$CONFIG_FILE\""
+    fi
+    if [ -n "$THEME" ]; then
+        CMD="$CMD --theme \"$THEME\""
     fi
     if [ -n "$MAX_PANES" ]; then
         CMD="$CMD --max-panes \"$MAX_PANES\""
